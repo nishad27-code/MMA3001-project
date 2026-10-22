@@ -1,0 +1,224 @@
+============================= test session starts =============================
+platform win32 -- Python 3.10.11, pytest-8.3.3, pluggy-1.7.0 -- C:\Users\nisha\Documents\MMA3001-project\.venv\Scripts\python.exe
+rootdir: C:\Users\nisha\Documents\MMA3001-project
+configfile: pyproject.toml
+testpaths: tests
+collecting ... collected 98 items
+
+tests/test_evaluation.py::test_chronological_split_is_disjoint_and_ordered PASSED [  1%]
+tests/test_evaluation.py::test_gap_hides_k_readings_under_jitter[10-1] PASSED [  2%]
+tests/test_evaluation.py::test_gap_hides_k_readings_under_jitter[30-3] PASSED [  3%]
+tests/test_evaluation.py::test_gap_hides_k_readings_under_jitter[60-6] PASSED [  4%]
+tests/test_evaluation.py::test_gap_hides_k_readings_under_jitter[180-18] PASSED [  5%]
+tests/test_evaluation.py::test_gap_hides_k_readings_under_jitter[360-36] PASSED [  6%]
+tests/test_evaluation.py::test_gap_with_native_missing_reading_hides_fewer PASSED [  7%]
+tests/test_evaluation.py::test_gap_must_fit_inside_period PASSED         [  8%]
+tests/test_evaluation.py::test_context_excludes_hidden_and_has_requested_size PASSED [  9%]
+tests/test_evaluation.py::test_reconstruct_gap_never_sees_hidden_values PASSED [ 10%]
+tests/test_evaluation.py::test_leak_assertion_fires PASSED               [ 11%]
+tests/test_evaluation.py::test_sample_gaps_non_overlapping_within_bounds_and_reproducible PASSED [ 12%]
+tests/test_evaluation.py::test_metrics_match_hand_calculation PASSED     [ 13%]
+tests/test_evaluation.py::test_bootstrap_ci_brackets_estimate PASSED     [ 14%]
+tests/test_evaluation.py::test_evaluate_same_gaps_for_all_methods_and_exact_on_line PASSED [ 15%]
+tests/test_evaluation.py::test_evaluate_rejects_empty PASSED             [ 16%]
+tests/test_evaluation.py::test_nominal_dt_constant PASSED                [ 17%]
+tests/test_evaluation.py::test_gap_statistics_regular_series PASSED      [ 18%]
+tests/test_evaluation.py::test_gap_statistics_native_missing_reading_beside_10min_gap PASSED [ 19%]
+tests/test_evaluation.py::test_gap_statistics_native_missing_reading_inside_window PASSED [ 20%]
+tests/test_evaluation.py::test_common_gaps_identical_hidden_blocks_for_every_context PASSED [ 21%]
+tests/test_evaluation.py::test_with_context_rejects_too_small_context PASSED [ 22%]
+tests/test_evaluation.py::test_tune_context_uses_same_gaps_and_dev_period_only PASSED [ 23%]
+tests/test_experiment_tuning.py::test_temperature_run_tuning_fair_dev_only_and_leaves_test_outputs PASSED [ 24%]
+tests/test_loader.py::test_parse_valid_reading PASSED                    [ 25%]
+tests/test_loader.py::test_parse_rejections[not json-bad_json] PASSED    [ 26%]
+tests/test_loader.py::test_parse_rejections[{"a": 1}-bad_json] PASSED    [ 27%]
+tests/test_loader.py::test_parse_rejections[[{"values": [{"time": 1709186696, "value": 23.8}], "variable": {"id": 84, "name": "Temperature", "unit": "\\u00b0C"}}, {"values": [{"time": 1709186696, "value": 465}], "variable": {"id": 67, "name": "Humidity", "unit": "ppm"}}]-variable_absent] PASSED [ 28%]
+tests/test_loader.py::test_parse_rejections[[{"values": [{"time": 1709186696, "value": 23.8}], "variable": {"id": 84, "name": "Temperature", "unit": "\\u00b0C"}}, {"values": [{"time": 1709186696, "value": 465}], "variable": {"id": 67, "name": "Carbon dioxide", "unit": "mg/m3"}}]-unit_mismatch] PASSED [ 29%]
+tests/test_loader.py::test_parse_rejections[[{"values": [], "variable": {"name": "Carbon dioxide", "unit": "ppm"}}]-no_values] PASSED [ 30%]
+tests/test_loader.py::test_parse_rejections[[{"values": [{"time": 1709186696, "value": 23.8}], "variable": {"id": 84, "name": "Temperature", "unit": "\\u00b0C"}}, {"values": [{"time": 1709186696, "errorCode": 3}], "variable": {"id": 67, "name": "Carbon dioxide", "unit": "ppm"}}]-error_code] PASSED [ 31%]
+tests/test_loader.py::test_parse_rejections[[{"values": [{"time": 1709186696, "value": 23.8}], "variable": {"id": 84, "name": "Temperature", "unit": "\\u00b0C"}}, {"values": [{"time": 1709186696}], "variable": {"id": 67, "name": "Carbon dioxide", "unit": "ppm"}}]-missing_value] PASSED [ 32%]
+tests/test_loader.py::test_parse_rejections[[{"values": [{"time": 1709186696, "value": 23.8}], "variable": {"id": 84, "name": "Temperature", "unit": "\\u00b0C"}}, {"values": [{"time": 1709186696, "value": "465"}], "variable": {"id": 67, "name": "Carbon dioxide", "unit": "ppm"}}]-non_numeric] PASSED [ 33%]
+tests/test_loader.py::test_parse_rejections[[{"values": [{"time": 1709186696, "value": 23.8}], "variable": {"id": 84, "name": "Temperature", "unit": "\\u00b0C"}}, {"values": [{"time": 1709186696, "value": true}], "variable": {"id": 67, "name": "Carbon dioxide", "unit": "ppm"}}]-non_numeric] PASSED [ 34%]
+tests/test_loader.py::test_parse_rejections[[{"values": [{"time": 1709186696, "value": 23.8}], "variable": {"id": 84, "name": "Temperature", "unit": "\\u00b0C"}}, {"values": [{"time": 1709186696, "value": NaN}], "variable": {"id": 67, "name": "Carbon dioxide", "unit": "ppm"}}]-non_finite] PASSED [ 35%]
+tests/test_loader.py::test_parse_rejections[[{"values": [{"time": "yesterday", "value": 23.8}], "variable": {"id": 84, "name": "Temperature", "unit": "\\u00b0C"}}, {"values": [{"time": "yesterday", "value": 465}], "variable": {"id": 67, "name": "Carbon dioxide", "unit": "ppm"}}]-bad_timestamp] PASSED [ 36%]
+tests/test_loader.py::test_parse_rejections[[{"values": [{"time": 0, "value": 23.8}], "variable": {"id": 84, "name": "Temperature", "unit": "\\u00b0C"}}, {"values": [{"time": 0, "value": 465}], "variable": {"id": 67, "name": "Carbon dioxide", "unit": "ppm"}}]-bad_timestamp] PASSED [ 37%]
+tests/test_loader.py::test_parse_rejections[[{"values": [{"time": 1709186696, "value": 23.8}], "variable": {"id": 84, "name": "Temperature", "unit": "\\u00b0C"}}, {"values": [{"time": 1709186696, "value": 12}], "variable": {"id": 67, "name": "Carbon dioxide", "unit": "ppm"}}]-out_of_range] PASSED [ 38%]
+tests/test_loader.py::test_parse_rejections[[{"values": [{"time": 1709186696, "value": 23.8}], "variable": {"id": 84, "name": "Temperature", "unit": "\\u00b0C"}}, {"values": [{"time": 1709186696, "value": 99999}], "variable": {"id": 67, "name": "Carbon dioxide", "unit": "ppm"}}]-out_of_range] PASSED [ 39%]
+tests/test_loader.py::test_temperature_unit_with_degree_sign PASSED      [ 40%]
+tests/test_loader.py::test_stale_repeats_are_dropped_and_counted PASSED  [ 41%]
+tests/test_loader.py::test_conflicting_duplicate_keeps_first_and_counts PASSED [ 42%]
+tests/test_loader.py::test_out_of_order_readings_are_sorted PASSED       [ 43%]
+tests/test_loader.py::test_rejections_counted_by_reason PASSED           [ 44%]
+tests/test_loader.py::test_default_plausible_range_applies PASSED        [ 45%]
+tests/test_loader.py::test_iter_sensor_rows_filters_sensor PASSED        [ 46%]
+tests/test_loader.py::test_iter_sensor_rows_missing_file PASSED          [ 47%]
+tests/test_loader.py::test_iter_sensor_rows_missing_column PASSED        [ 48%]
+tests/test_loader.py::test_epoch_to_utc_iso PASSED                       [ 50%]
+tests/test_loader.py::test_interval_summary_detects_known_gap PASSED     [ 51%]
+tests/test_loader.py::test_interval_summary_rejects_bad_input[t0] PASSED [ 52%]
+tests/test_loader.py::test_interval_summary_rejects_bad_input[t1] PASSED [ 53%]
+tests/test_loader.py::test_interval_summary_rejects_bad_input[t2] PASSED [ 54%]
+tests/test_methods.py::test_forward_fill_returns_last_known_value PASSED [ 55%]
+tests/test_methods.py::test_linear_reproduces_straight_line_exactly PASSED [ 56%]
+tests/test_methods.py::test_cubic_spline_reproduces_cubic_exactly PASSED [ 57%]
+tests/test_methods.py::test_linear_is_not_exact_for_cubic_but_spline_is PASSED [ 58%]
+tests/test_methods.py::test_spline_error_converges_at_fourth_order PASSED [ 59%]
+tests/test_methods.py::test_linear_error_converges_at_second_order PASSED [ 60%]
+tests/test_methods.py::test_methods_pass_through_known_points PASSED     [ 61%]
+tests/test_methods.py::test_invalid_inputs_raise[t0-y0-q0-forward_fill] PASSED [ 62%]
+tests/test_methods.py::test_invalid_inputs_raise[t0-y0-q0-linear] PASSED [ 63%]
+tests/test_methods.py::test_invalid_inputs_raise[t0-y0-q0-cubic_spline] PASSED [ 64%]
+tests/test_methods.py::test_invalid_inputs_raise[t1-y1-q1-forward_fill] PASSED [ 65%]
+tests/test_methods.py::test_invalid_inputs_raise[t1-y1-q1-linear] PASSED [ 66%]
+tests/test_methods.py::test_invalid_inputs_raise[t1-y1-q1-cubic_spline] PASSED [ 67%]
+tests/test_methods.py::test_invalid_inputs_raise[t2-y2-q2-forward_fill] PASSED [ 68%]
+tests/test_methods.py::test_invalid_inputs_raise[t2-y2-q2-linear] PASSED [ 69%]
+tests/test_methods.py::test_invalid_inputs_raise[t2-y2-q2-cubic_spline] PASSED [ 70%]
+tests/test_methods.py::test_invalid_inputs_raise[t3-y3-q3-forward_fill] PASSED [ 71%]
+tests/test_methods.py::test_invalid_inputs_raise[t3-y3-q3-linear] PASSED [ 72%]
+tests/test_methods.py::test_invalid_inputs_raise[t3-y3-q3-cubic_spline] PASSED [ 73%]
+tests/test_methods.py::test_invalid_inputs_raise[t4-y4-q4-forward_fill] PASSED [ 74%]
+tests/test_methods.py::test_invalid_inputs_raise[t4-y4-q4-linear] PASSED [ 75%]
+tests/test_methods.py::test_invalid_inputs_raise[t4-y4-q4-cubic_spline] PASSED [ 76%]
+tests/test_methods.py::test_invalid_inputs_raise[t5-y5-q5-forward_fill] PASSED [ 77%]
+tests/test_methods.py::test_invalid_inputs_raise[t5-y5-q5-linear] PASSED [ 78%]
+tests/test_methods.py::test_invalid_inputs_raise[t5-y5-q5-cubic_spline] PASSED [ 79%]
+tests/test_methods.py::test_interpolators_refuse_extrapolation PASSED    [ 80%]
+tests/test_methods.py::test_minimum_point_counts PASSED                  [ 81%]
+tests/test_paired_bootstrap.py::test_day_blocks_use_local_midnight PASSED [ 82%]
+tests/test_paired_bootstrap.py::test_day_blocks_multi_day_and_validation PASSED [ 83%]
+tests/test_paired_bootstrap.py::test_point_estimates_are_pooled_mae PASSED [ 84%]
+tests/test_paired_bootstrap.py::test_identical_methods_give_zero_difference_in_every_replicate PASSED [ 85%]
+tests/test_paired_bootstrap.py::test_pairing_constant_per_reading_offset_is_exact PASSED [ 86%]
+tests/test_paired_bootstrap.py::test_single_block_has_degenerate_interval PASSED [ 87%]
+tests/test_paired_bootstrap.py::test_resamples_whole_blocks PASSED       [ 88%]
+tests/test_paired_bootstrap.py::test_reproducible_with_same_seed_and_differs_with_other_seed PASSED [ 89%]
+tests/test_paired_bootstrap.py::test_intervals_are_ordered_nested_and_contain_point PASSED [ 90%]
+tests/test_paired_bootstrap.py::test_detects_clear_difference_and_reports_inconclusive_null PASSED [ 91%]
+tests/test_paired_bootstrap.py::test_block_bootstrap_wider_than_gap_bootstrap_under_day_dependence PASSED [ 92%]
+tests/test_paired_bootstrap.py::test_invalid_inputs_raise[kwargs0] PASSED [ 93%]
+tests/test_paired_bootstrap.py::test_invalid_inputs_raise[kwargs1] PASSED [ 94%]
+tests/test_paired_bootstrap.py::test_invalid_inputs_raise[kwargs2] PASSED [ 95%]
+tests/test_paired_bootstrap.py::test_invalid_inputs_raise[kwargs3] PASSED [ 96%]
+tests/test_paired_bootstrap.py::test_invalid_inputs_raise[kwargs4] PASSED [ 97%]
+tests/test_paired_bootstrap.py::test_paired_step_matches_main_evaluation_and_guards PASSED [ 98%]
+tests/test_paired_bootstrap.py::test_check_against_test_metrics_detects_mismatch PASSED [100%]
+
+============================== warnings summary ===============================
+.venv\lib\site-packages\matplotlib\_fontconfig_pattern.py:64
+  C:\Users\nisha\Documents\MMA3001-project\.venv\lib\site-packages\matplotlib\_fontconfig_pattern.py:64: PyparsingDeprecationWarning: 'oneOf' deprecated - use 'one_of'
+    prop = Group((name + Suppress("=") + comma_separated(value)) | oneOf(_CONSTANTS))
+
+.venv\lib\site-packages\matplotlib\_fontconfig_pattern.py:85: 6 warnings
+tests/test_paired_bootstrap.py: 25 warnings
+  C:\Users\nisha\Documents\MMA3001-project\.venv\lib\site-packages\matplotlib\_fontconfig_pattern.py:85: PyparsingDeprecationWarning: 'parseString' deprecated - use 'parse_string'
+    parse = parser.parseString(pattern)
+
+.venv\lib\site-packages\matplotlib\_fontconfig_pattern.py:89: 6 warnings
+tests/test_paired_bootstrap.py: 25 warnings
+  C:\Users\nisha\Documents\MMA3001-project\.venv\lib\site-packages\matplotlib\_fontconfig_pattern.py:89: PyparsingDeprecationWarning: 'resetCache' deprecated - use 'reset_cache'
+    parser.resetCache()
+
+.venv\lib\site-packages\matplotlib\_mathtext.py:45
+  C:\Users\nisha\Documents\MMA3001-project\.venv\lib\site-packages\matplotlib\_mathtext.py:45: PyparsingDeprecationWarning: 'enablePackrat' deprecated - use 'enable_packrat'
+    ParserElement.enablePackrat()
+
+tests/test_paired_bootstrap.py::test_paired_step_matches_main_evaluation_and_guards
+  C:\Users\nisha\Documents\MMA3001-project\.venv\lib\site-packages\matplotlib\_mathtext.py:2010: PyparsingDeprecationWarning: 'oneOf' deprecated - use 'one_of'
+    p.space          = oneOf(self._space_widths)("space")
+
+tests/test_paired_bootstrap.py::test_paired_step_matches_main_evaluation_and_guards
+  C:\Users\nisha\Documents\MMA3001-project\.venv\lib\site-packages\matplotlib\_mathtext.py:2012: PyparsingDeprecationWarning: 'oneOf' deprecated - use 'one_of'
+    p.style_literal  = oneOf(
+
+tests/test_paired_bootstrap.py::test_paired_step_matches_main_evaluation_and_guards
+  C:\Users\nisha\Documents\MMA3001-project\.venv\lib\site-packages\matplotlib\_mathtext.py:2020: PyparsingDeprecationWarning: 'leaveWhitespace' deprecated - use 'leave_whitespace'
+    )("sym").leaveWhitespace()
+
+tests/test_paired_bootstrap.py::test_paired_step_matches_main_evaluation_and_guards
+  C:\Users\nisha\Documents\MMA3001-project\.venv\lib\site-packages\matplotlib\_mathtext.py:2024: PyparsingDeprecationWarning: 'oneOf' deprecated - use 'one_of'
+    p.start_group    = Optional(r"\math" + oneOf(self._fontnames)("font")) + "{"
+
+tests/test_paired_bootstrap.py::test_paired_step_matches_main_evaluation_and_guards
+  C:\Users\nisha\Documents\MMA3001-project\.venv\lib\site-packages\matplotlib\_mathtext.py:2027: PyparsingDeprecationWarning: 'oneOf' deprecated - use 'one_of'
+    p.delim          = oneOf(self._delims)
+
+tests/test_paired_bootstrap.py: 47 warnings
+  C:\Users\nisha\Documents\MMA3001-project\.venv\lib\site-packages\matplotlib\_mathtext.py:1984: PyparsingDeprecationWarning: 'setName' deprecated - use 'set_name'
+    val.setName(key)
+
+tests/test_paired_bootstrap.py: 44 warnings
+  C:\Users\nisha\Documents\MMA3001-project\.venv\lib\site-packages\matplotlib\_mathtext.py:1987: PyparsingDeprecationWarning: 'setParseAction' deprecated - use 'set_parse_action'
+    val.setParseAction(getattr(self, key))
+
+tests/test_paired_bootstrap.py: 16 warnings
+  C:\Users\nisha\Documents\MMA3001-project\.venv\lib\site-packages\matplotlib\_mathtext.py:1748: PyparsingDeprecationWarning: 'setParseAction' deprecated - use 'set_parse_action'
+    return Empty().setParseAction(raise_error)
+
+tests/test_paired_bootstrap.py::test_paired_step_matches_main_evaluation_and_guards
+  C:\Users\nisha\Documents\MMA3001-project\.venv\lib\site-packages\matplotlib\_mathtext.py:2088: PyparsingDeprecationWarning: 'endQuoteChar' argument is deprecated, use 'end_quote_char'
+    p.text = cmd(r"\text", QuotedString('{', '\\', endQuoteChar="}"))
+
+tests/test_paired_bootstrap.py::test_paired_step_matches_main_evaluation_and_guards
+  C:\Users\nisha\Documents\MMA3001-project\.venv\lib\site-packages\matplotlib\_mathtext.py:2097: PyparsingDeprecationWarning: 'oneOf' deprecated - use 'one_of'
+    + OneOrMore(oneOf(["_", "^"]) - p.placeable)("subsuper")
+
+tests/test_paired_bootstrap.py::test_paired_step_matches_main_evaluation_and_guards
+  C:\Users\nisha\Documents\MMA3001-project\.venv\lib\site-packages\matplotlib\_mathtext.py:2146: PyparsingDeprecationWarning: 'unquoteResults' argument is deprecated, use 'unquote_results'
+    p.math_string   = QuotedString('$', '\\', unquoteResults=False)
+
+tests/test_paired_bootstrap.py::test_paired_step_matches_main_evaluation_and_guards
+  C:\Users\nisha\Documents\MMA3001-project\.venv\lib\site-packages\matplotlib\_mathtext.py:2147: PyparsingDeprecationWarning: 'leaveWhitespace' deprecated - use 'leave_whitespace'
+    p.non_math      = Regex(r"(?:(?:\\[$])|[^$])*").leaveWhitespace()
+
+tests/test_paired_bootstrap.py::test_paired_step_matches_main_evaluation_and_guards
+tests/test_paired_bootstrap.py::test_paired_step_matches_main_evaluation_and_guards
+tests/test_paired_bootstrap.py::test_paired_step_matches_main_evaluation_and_guards
+tests/test_paired_bootstrap.py::test_paired_step_matches_main_evaluation_and_guards
+tests/test_paired_bootstrap.py::test_paired_step_matches_main_evaluation_and_guards
+tests/test_paired_bootstrap.py::test_paired_step_matches_main_evaluation_and_guards
+tests/test_paired_bootstrap.py::test_paired_step_matches_main_evaluation_and_guards
+tests/test_paired_bootstrap.py::test_paired_step_matches_main_evaluation_and_guards
+tests/test_paired_bootstrap.py::test_paired_step_matches_main_evaluation_and_guards
+  C:\Users\nisha\Documents\MMA3001-project\.venv\lib\site-packages\matplotlib\_mathtext.py:2170: PyparsingDeprecationWarning: 'parseString' deprecated - use 'parse_string'
+    result = self._expression.parseString(s)
+
+tests/test_paired_bootstrap.py::test_paired_step_matches_main_evaluation_and_guards
+tests/test_paired_bootstrap.py::test_paired_step_matches_main_evaluation_and_guards
+tests/test_paired_bootstrap.py::test_paired_step_matches_main_evaluation_and_guards
+tests/test_paired_bootstrap.py::test_paired_step_matches_main_evaluation_and_guards
+tests/test_paired_bootstrap.py::test_paired_step_matches_main_evaluation_and_guards
+tests/test_paired_bootstrap.py::test_paired_step_matches_main_evaluation_and_guards
+tests/test_paired_bootstrap.py::test_paired_step_matches_main_evaluation_and_guards
+tests/test_paired_bootstrap.py::test_paired_step_matches_main_evaluation_and_guards
+tests/test_paired_bootstrap.py::test_paired_step_matches_main_evaluation_and_guards
+  C:\Users\nisha\Documents\MMA3001-project\.venv\lib\site-packages\matplotlib\_mathtext.py:2197: PyparsingDeprecationWarning: 'parseString' deprecated - use 'parse_string'
+    return self._math_expression.parseString(toks[0][1:-1], parseAll=True)
+
+tests/test_paired_bootstrap.py::test_paired_step_matches_main_evaluation_and_guards
+tests/test_paired_bootstrap.py::test_paired_step_matches_main_evaluation_and_guards
+tests/test_paired_bootstrap.py::test_paired_step_matches_main_evaluation_and_guards
+tests/test_paired_bootstrap.py::test_paired_step_matches_main_evaluation_and_guards
+tests/test_paired_bootstrap.py::test_paired_step_matches_main_evaluation_and_guards
+tests/test_paired_bootstrap.py::test_paired_step_matches_main_evaluation_and_guards
+tests/test_paired_bootstrap.py::test_paired_step_matches_main_evaluation_and_guards
+tests/test_paired_bootstrap.py::test_paired_step_matches_main_evaluation_and_guards
+tests/test_paired_bootstrap.py::test_paired_step_matches_main_evaluation_and_guards
+  C:\Users\nisha\Documents\MMA3001-project\.venv\lib\site-packages\pyparsing\util.py:466: PyparsingDeprecationWarning: 'parseAll' argument is deprecated, use 'parse_all'
+    return fn(self, *args, **kwargs)
+
+tests/test_paired_bootstrap.py::test_paired_step_matches_main_evaluation_and_guards
+tests/test_paired_bootstrap.py::test_paired_step_matches_main_evaluation_and_guards
+tests/test_paired_bootstrap.py::test_paired_step_matches_main_evaluation_and_guards
+tests/test_paired_bootstrap.py::test_paired_step_matches_main_evaluation_and_guards
+tests/test_paired_bootstrap.py::test_paired_step_matches_main_evaluation_and_guards
+tests/test_paired_bootstrap.py::test_paired_step_matches_main_evaluation_and_guards
+tests/test_paired_bootstrap.py::test_paired_step_matches_main_evaluation_and_guards
+tests/test_paired_bootstrap.py::test_paired_step_matches_main_evaluation_and_guards
+tests/test_paired_bootstrap.py::test_paired_step_matches_main_evaluation_and_guards
+  C:\Users\nisha\Documents\MMA3001-project\.venv\lib\site-packages\matplotlib\_mathtext.py:2178: PyparsingDeprecationWarning: 'resetCache' deprecated - use 'reset_cache'
+    ParserElement.resetCache()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: C:\Users\nisha\Documents\MMA3001-project\results\test-report.xml -
+====================== 98 passed, 216 warnings in 15.71s ======================
