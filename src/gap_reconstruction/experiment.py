@@ -22,8 +22,8 @@ Protocol (fixed before looking at any test-period result):
    This is the sensitivity study of gap duration. Runtime is measured, and
    one configuration is profiled with cProfile.
 4. **Paired comparison (test period, no selection)**: on the same test gaps,
-   the MAE differences forward-fill − linear and spline − linear are given
-   paired day-block bootstrap intervals (`paired_comparison`). This step
+   the MAE difference of every other method minus linear is given a
+   paired day-block bootstrap interval (`paired_comparison`). This step
    only quantifies uncertainty; nothing is chosen from it.
 
 Outputs (aggregate statistics only, safe to commit):
@@ -77,16 +77,19 @@ PAIRED_N_BOOT = 5000
 PAIRED_BLOCK_DAYS = (1, 3)  # 1 day = primary analysis; 3 days = robustness check
 UTC_OFFSET_HOURS = 10.0  # AEST; no daylight-saving change in the test period
 CI_LEVEL = 0.95
-# Bonferroni: 2 comparisons x 5 durations per variable -> 1 - 0.05 / 10
-CI_LEVEL_BONFERRONI = 1.0 - (1.0 - CI_LEVEL) / (2 * len(DURATIONS_MIN))
+# Bonferroni over every (method vs linear) x duration comparison per variable:
+# with 4 methods, 3 comparisons x 5 durations -> 1 - 0.05 / 15
+N_PAIRED_COMPARISONS = (len(METHODS) - 1) * len(DURATIONS_MIN)
+CI_LEVEL_BONFERRONI = 1.0 - (1.0 - CI_LEVEL) / N_PAIRED_COMPARISONS
 
 VARIABLES = {
     "co2": {"file": "co2_{sensor}.csv", "column": "co2_ppm", "unit": "ppm", "label": "CO$_2$"},
     "temperature": {"file": "temperature_{sensor}.csv", "column": "temperature_c", "unit": "°C",
                     "label": "Temperature"},
 }
-LABELS = {"forward_fill": "Forward-fill (baseline)", "linear": "Linear", "cubic_spline": "Cubic spline"}
-COLORS = {"forward_fill": "#7f7f7f", "linear": "#1f77b4", "cubic_spline": "#d62728"}
+LABELS = {"forward_fill": "Forward-fill (baseline)", "linear": "Linear", "cubic_spline": "Cubic spline",
+          "pchip": "PCHIP"}
+COLORS = {"forward_fill": "#7f7f7f", "linear": "#1f77b4", "cubic_spline": "#d62728", "pchip": "#2ca02c"}
 
 
 def load_processed(path: Path, column: str) -> tuple[np.ndarray, np.ndarray]:
@@ -329,6 +332,7 @@ def run(variable: str, sensor: str, processed: Path, out: Path) -> dict:
         test_raw[d] = (gaps, r)
         lin, spl = np.array(r["methods"]["linear"]["per_gap_mae"]), np.array(r["methods"]["cubic_spline"]["per_gap_mae"])
         ff = np.array(r["methods"]["forward_fill"]["per_gap_mae"])
+        pch = np.array(r["methods"]["pchip"]["per_gap_mae"])
         for m, mr in r["methods"].items():
             pg = np.array(mr["per_gap_mae"])
             test_rows.append({
@@ -345,6 +349,7 @@ def run(variable: str, sensor: str, processed: Path, out: Path) -> dict:
                 "us_per_gap": mr["us_per_gap"],
                 "frac_gaps_spline_better_than_linear": float(np.mean(spl < lin)),
                 "frac_gaps_linear_better_than_ffill": float(np.mean(lin < ff)),
+                "frac_gaps_pchip_better_than_linear": float(np.mean(pch < lin)),
             })
     _write_csv(out / f"{variable}_test_metrics.csv", test_rows)
     paired_rows = paired_comparison(t, y, split, context, spec["unit"])
@@ -362,7 +367,7 @@ def run(variable: str, sensor: str, processed: Path, out: Path) -> dict:
     buf = io.StringIO()
     pstats.Stats(prof, stream=buf).sort_stats("cumulative").print_stats(15)
     (out / f"{variable}_profile.txt").write_text(
-        f"cProfile: all three methods on the {len(gaps60)} test gaps of 60 min, context={context}\n\n"
+        f"cProfile: all {len(METHODS)} methods on the {len(gaps60)} test gaps of 60 min, context={context}\n\n"
         + buf.getvalue().replace(str(Path.cwd()) + "\\", "").replace(str(Path.cwd()), "."),
         encoding="utf-8")
 
@@ -475,7 +480,7 @@ def _plot_paired(rows, spec, path):
     """Paired MAE differences vs linear (1-day blocks) with 95 % and Bonferroni intervals."""
     fig, ax = plt.subplots(figsize=(6.5, 4), constrained_layout=True)
     r1 = [r for r in rows if r["block_days"] == PAIRED_BLOCK_DAYS[0]]
-    for k, (m, offset) in enumerate((("forward_fill", 0.94), ("cubic_spline", 1.06))):
+    for k, (m, offset) in enumerate((("forward_fill", 0.92), ("cubic_spline", 1.0), ("pchip", 1.08))):
         r = [x for x in r1 if x["comparison"].startswith(m)]
         d = np.array([x["duration_min"] for x in r], float) * offset
         v = np.array([x["diff"] for x in r])

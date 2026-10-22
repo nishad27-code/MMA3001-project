@@ -9,6 +9,8 @@ import pytest
 
 from gap_reconstruction import benchmark as bm
 from gap_reconstruction import experiment as exp
+from gap_reconstruction.evaluation import reconstruct_gap
+from gap_reconstruction.methods import METHODS
 
 
 def test_method_order_rotates_and_balances_positions():
@@ -80,9 +82,6 @@ def test_run_benchmark_end_to_end_and_guards(tmp_path):
     split = exp.chronological_split(t.size, exp.TEST_FRACTION)
     counts = {d: len(exp._test_gaps(t, split, 2, d)) for d in exp.DURATIONS_MIN}
 
-    from gap_reconstruction.evaluation import reconstruct_gap
-    from gap_reconstruction.methods import METHODS
-
     true_mae = {}
     for d in exp.DURATIONS_MIN:
         gs = exp._test_gaps(t, split, 2, d)
@@ -95,7 +94,7 @@ def test_run_benchmark_end_to_end_and_guards(tmp_path):
             w = csv.writer(fh)
             w.writerow(["duration_min", "n_gaps", "method", "mae"])
             for d, k in n_by_duration.items():
-                for m in ("forward_fill", "linear", "cubic_spline"):
+                for m in METHODS:
                     w.writerow([d, k, m, repr(mae[(d, m)])])
 
     write_metrics({**counts, 60: counts[60] + 1})  # one wrong count must stop the benchmark
@@ -107,7 +106,7 @@ def test_run_benchmark_end_to_end_and_guards(tmp_path):
     write_metrics(counts)
     meta = bm.run_benchmark("co2", "X", processed, out, rounds=3, warmup=1, runs=2)
     rows = list(csv.DictReader((out / "co2_runtime_benchmark.csv").open(encoding="utf-8")))
-    assert len(rows) == 2 * len(exp.DURATIONS_MIN) * 3
+    assert len(rows) == 2 * len(exp.DURATIONS_MIN) * len(METHODS)
     assert all(float(r["min_us"]) <= float(r["median_us"]) <= float(r["max_us"]) for r in rows)
     assert all(float(r["median_ratio_to_linear"]) == 1.0 for r in rows if r["method"] == "linear")
     assert meta["context"] == 2 and meta["runs"] == 2 and meta["rounds"] == 3

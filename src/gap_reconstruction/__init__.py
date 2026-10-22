@@ -8,8 +8,8 @@ The package is organised as a small pipeline:
   environmental CSV and extracts genuine (non-stale) readings for one sensor.
 - `gap_reconstruction.extract` is the command-line step that writes the
   processed CO2 time series to ``data/processed/``.
-- `gap_reconstruction.methods` implements the three reconstruction methods
-  (forward-fill baseline, linear interpolation, cubic-spline interpolation).
+- `gap_reconstruction.methods` implements the reconstruction methods
+  (forward-fill baseline, linear, cubic-spline and PCHIP interpolation).
 - `gap_reconstruction.evaluation` hides contiguous blocks of real readings,
   reconstructs them and scores the reconstructions.
 - `gap_reconstruction.experiment` is the command-line step that runs the

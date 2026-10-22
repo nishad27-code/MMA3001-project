@@ -16,6 +16,9 @@ Information used by each method
   of the gap, so it needs the first reading *after* the gap.
 - `cubic_spline`: **retrospective**. Fits a C2-continuous piecewise cubic
   through all supplied known readings (before and after the gap).
+- `pchip`: **retrospective**. Shape-preserving piecewise cubic (C1) through
+  the known readings; between two consecutive readings it never leaves
+  their range, so it cannot overshoot.
 
 This project only reconstructs gaps after the fact, from a log, so the
 retrospective methods are legitimate here. They would not be usable for
@@ -27,7 +30,7 @@ from __future__ import annotations
 from typing import Callable
 
 import numpy as np
-from scipy.interpolate import CubicSpline
+from scipy.interpolate import CubicSpline, PchipInterpolator
 
 Method = Callable[[np.ndarray, np.ndarray, np.ndarray], np.ndarray]
 
@@ -139,9 +142,46 @@ def cubic_spline(t_known, y_known, t_query) -> np.ndarray:
     return spline(t_query - t0)
 
 
+def pchip(t_known, y_known, t_query) -> np.ndarray:
+    """Shape-preserving piecewise cubic Hermite interpolation (PCHIP).
+
+    Like `cubic_spline` this passes through every known reading with a
+    piecewise cubic, but the slope at each reading is chosen to avoid
+    overshoot (Fritsch-Carlson, via `scipy.interpolate.PchipInterpolator`).
+    The slope is zero where a reading is a local maximum or minimum of its
+    neighbours, and otherwise a weighted harmonic mean of the two
+    neighbouring secant slopes. The curve is therefore monotone between any
+    two consecutive known readings and never leaves their range: inside a
+    gap it stays between the two boundary readings.
+
+    The interpolant is C1 (continuous slope) but not C2, and on smooth data
+    it is generally less accurate than a not-a-knot spline. Each slope depends
+    only on the neighbouring readings, so the estimate inside a gap depends
+    only on the two known readings on each side; more context has no effect.
+
+    Times are shifted to start at zero before fitting, as in `cubic_spline`.
+
+    Parameters
+    ----------
+    t_known, y_known : array_like
+        Known reading times (s, strictly increasing) and values; at least 2.
+    t_query : array_like
+        Times to estimate, within ``[t_known[0], t_known[-1]]``.
+
+    Returns
+    -------
+    numpy.ndarray
+        PCHIP values at ``t_query``.
+    """
+    t_known, y_known, t_query = _validate(t_known, y_known, t_query, 2, need_right=True)
+    t0 = t_known[0]
+    return PchipInterpolator(t_known - t0, y_known, extrapolate=False)(t_query - t0)
+
+
 #: Registry used by the experiment; the order is the reporting order.
 METHODS: dict[str, Method] = {
     "forward_fill": forward_fill,
     "linear": linear,
     "cubic_spline": cubic_spline,
+    "pchip": pchip,
 }

@@ -169,7 +169,7 @@ def test_paired_step_matches_main_evaluation_and_guards(tmp_path):
     rows = list(csv.DictReader((out / "co2_paired_bootstrap.csv").open(encoding="utf-8")))
     stored = {(r["duration_min"], r["method"]): float(r["mae"])
               for r in csv.DictReader((out / "co2_test_metrics.csv").open(encoding="utf-8"))}
-    assert {r["comparison"] for r in rows} == {"forward_fill - linear", "cubic_spline - linear"}
+    assert {r["comparison"] for r in rows} == {f"{m} - linear" for m in exp.METHODS if m != "linear"}
     assert {int(r["block_days"]) for r in rows} == set(exp.PAIRED_BLOCK_DAYS)
     for r in rows:
         assert float(r["mae_linear"]) == pytest.approx(stored[(r["duration_min"], "linear")], rel=1e-5)

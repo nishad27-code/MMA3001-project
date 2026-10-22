@@ -1,4 +1,4 @@
-"""Command-line step 3: runtime benchmark of the three methods on the test gaps.
+"""Command-line step 3: runtime benchmark of the reconstruction methods on the test gaps.
 
 Run from the repository root, after the main experiment::
 
