@@ -1,0 +1,73 @@
+{
+  "variable": "temperature",
+  "unit": "°C",
+  "sensor_id": "6012002000869",
+  "seed": 2024,
+  "n_readings": 13800,
+  "test_fraction": 0.3,
+  "dev_period_utc": [
+    "2024-02-29T06:04:56Z",
+    "2024-05-13T22:55:31Z"
+  ],
+  "test_period_utc": [
+    "2024-05-13T23:05:31Z",
+    "2024-06-13T17:45:44Z"
+  ],
+  "n_dev_readings": 9660,
+  "n_test_readings": 4140,
+  "durations_min": [
+    10,
+    30,
+    60,
+    180,
+    360
+  ],
+  "context_candidates": [
+    2,
+    4,
+    8,
+    16,
+    32
+  ],
+  "dev_mean_spline_mae_by_context": {
+    "2": 0.21478699411827645,
+    "4": 0.25189132746355203,
+    "8": 0.25758742908938104,
+    "16": 0.25758180400799274,
+    "32": 0.2575818038637364
+  },
+  "chosen_context": 2,
+  "n_gaps_max": 200,
+  "test_signal": {
+    "mean": 22.95398550724638,
+    "std": 1.1304614336323273,
+    "min": 19.0,
+    "max": 25.5,
+    "p05": 20.5,
+    "p95": 24.3,
+    "consecutive_step_mean_abs": 0.07464898595943838,
+    "consecutive_step_std": 0.16554779703154757,
+    "resolution": 0.1999999999999993
+  },
+  "wall_time_s": 26.0,
+  "python": "3.10.11",
+  "numpy": "1.26.4",
+  "scipy": "1.13.1",
+  "machine": "Intel64 Family 6 Model 186 Stepping 2, GenuineIntel",
+  "tuning_design": "common development gaps per duration, eligible for the largest context; every context scored on identical hidden readings",
+  "dev_gap_set_hash_by_duration": {
+    "10": "3a0ee48c781b",
+    "30": "94f0be3ec398",
+    "60": "420e753f3100",
+    "180": "508061bfb399",
+    "360": "5a33217acb04"
+  },
+  "dev_n_gaps_by_duration": {
+    "10": 200,
+    "30": 200,
+    "60": 200,
+    "180": 200,
+    "360": 200
+  },
+  "test_results_stale": false
+}
