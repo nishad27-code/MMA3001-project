@@ -24,6 +24,7 @@
 
             <h2>Submodules</h2>
             <ul>
+                    <li><a href="gap_reconstruction/benchmark.html">benchmark</a></li>
                     <li><a href="gap_reconstruction/evaluation.html">evaluation</a></li>
                     <li><a href="gap_reconstruction/experiment.html">experiment</a></li>
                     <li><a href="gap_reconstruction/extract.html">extract</a></li>
@@ -60,8 +61,8 @@ gap_reconstruction    </h1>
 environmental CSV and extracts genuine (non-stale) readings for one sensor.</li>
 <li><code><a href="gap_reconstruction/extract.html">gap_reconstruction.extract</a></code> is the command-line step that writes the
 processed CO2 time series to <code>data/processed/</code>.</li>
-<li><code><a href="gap_reconstruction/methods.html">gap_reconstruction.methods</a></code> implements the three reconstruction methods
-(forward-fill baseline, linear interpolation, cubic-spline interpolation).</li>
+<li><code><a href="gap_reconstruction/methods.html">gap_reconstruction.methods</a></code> implements the reconstruction methods
+(forward-fill baseline, linear, cubic-spline and PCHIP interpolation).</li>
 <li><code><a href="gap_reconstruction/evaluation.html">gap_reconstruction.evaluation</a></code> hides contiguous blocks of real readings,
 reconstructs them and scores the reconstructions.</li>
 <li><code><a href="gap_reconstruction/experiment.html">gap_reconstruction.experiment</a></code> is the command-line step that runs the
@@ -88,8 +89,8 @@ predictors. Forward-fill uses only earlier readings.</p>
 </span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a><span class="sd">  environmental CSV and extracts genuine (non-stale) readings for one sensor.</span>
 </span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a><span class="sd">- `gap_reconstruction.extract` is the command-line step that writes the</span>
 </span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a><span class="sd">  processed CO2 time series to ``data/processed/``.</span>
-</span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a><span class="sd">- `gap_reconstruction.methods` implements the three reconstruction methods</span>
-</span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a><span class="sd">  (forward-fill baseline, linear interpolation, cubic-spline interpolation).</span>
+</span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a><span class="sd">- `gap_reconstruction.methods` implements the reconstruction methods</span>
+</span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a><span class="sd">  (forward-fill baseline, linear, cubic-spline and PCHIP interpolation).</span>
 </span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a><span class="sd">- `gap_reconstruction.evaluation` hides contiguous blocks of real readings,</span>
 </span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a><span class="sd">  reconstructs them and scores the reconstructions.</span>
 </span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a><span class="sd">- `gap_reconstruction.experiment` is the command-line step that runs the</span>
