@@ -1,0 +1,13 @@
+[project]
+name = "gap-reconstruction"
+version = "0.1.0"
+description = "Reconstruction of missing indoor CO2 sensor readings (MMA3001 project)"
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.10"
+dependencies = ["numpy", "scipy", "matplotlib"]
+
+[tool.pytest.ini_options]
+# Import the package from src/ without needing an editable install.
+pythonpath = ["src"]
+testpaths = ["tests"]

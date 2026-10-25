@@ -1,0 +1,97 @@
+{
+  "variable": "co2",
+  "sensor_id": "6012002000869",
+  "context": 2,
+  "rounds": 30,
+  "test_gaps_checked_against": "co2_test_metrics.csv (n_gaps per duration and pooled MAE per duration and method, tolerance 1e-5 * max(1, |stored|))",
+  "test_gap_set_hash_by_duration": {
+    "10": "1a76f17b5389",
+    "30": "09a57cd27d5f",
+    "60": "64c98f8106c4",
+    "180": "7173730d97b6",
+    "360": "5802d9079281"
+  },
+  "warmup_rounds": 3,
+  "runs": 2,
+  "timer": "time.perf_counter_ns",
+  "garbage_collector": "paused during each timed loop",
+  "interleaving": "method order rotated every round",
+  "duration_order_by_run": {
+    "1": [
+      10,
+      30,
+      60,
+      180,
+      360
+    ],
+    "2": [
+      360,
+      180,
+      60,
+      30,
+      10
+    ]
+  },
+  "timed": "method call only (includes the method's input validation)",
+  "excluded": "data slicing, leak check, metric computation, plotting, file I/O",
+  "summary": {
+    "forward_fill": {
+      "median_us_range_over_runs_and_durations": [
+        18.606500000000004,
+        19.261250000000004
+      ],
+      "max_us_any_round": 32.086000000000006,
+      "ratio_to_linear_range": [
+        0.9835379812522083,
+        1.0158138758144961
+      ]
+    },
+    "linear": {
+      "median_us_range_over_runs_and_durations": [
+        18.445,
+        19.305750000000003
+      ],
+      "max_us_any_round": 27.671000000000003,
+      "ratio_to_linear_range": [
+        1.0,
+        1.0
+      ]
+    },
+    "cubic_spline": {
+      "median_us_range_over_runs_and_durations": [
+        122.05108695652174,
+        129.18225
+      ],
+      "max_us_any_round": 180.82150000000001,
+      "ratio_to_linear_range": [
+        6.52914624831279,
+        6.819593392021247
+      ]
+    }
+  },
+  "max_between_run_ratio_of_medians": 1.0289443642447706,
+  "between_run_ratio_of_medians": {
+    "10_forward_fill": 1.0054427240431665,
+    "10_linear": 1.0129709948495529,
+    "10_cubic_spline": 1.007027554796803,
+    "30_forward_fill": 1.0189046838470424,
+    "30_linear": 1.0142358857884493,
+    "30_cubic_spline": 1.0289443642447706,
+    "60_forward_fill": 1.0184401850627893,
+    "60_linear": 1.0104680528113266,
+    "60_cubic_spline": 1.00509669569798,
+    "180_forward_fill": 1.0040859043468289,
+    "180_linear": 1.0032697626181148,
+    "180_cubic_spline": 1.0067234889456151,
+    "360_forward_fill": 1.004147692664675,
+    "360_linear": 1.0076651802628893,
+    "360_cubic_spline": 1.0289347831895055
+  },
+  "wall_time_s": 9.7,
+  "python": "3.10.11",
+  "numpy": "1.26.4",
+  "scipy": "1.13.1",
+  "machine": "Intel64 Family 6 Model 186 Stepping 2, GenuineIntel",
+  "platform": "Windows-10-10.0.26200-SP0",
+  "note": "absolute times depend on the machine and its power state; ratios are more transferable"
+}

@@ -216,3 +216,13 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# --- MMA3001 project-specific ---
+# Raw sensor data (large; redistribution terms unconfirmed)
+data/building_sensors/
+# Processed sensor-derived data kept local until sharing is confirmed
+data/processed/
+# Unit brief / dataset PDFs: local reference only
+reference/
+# Local-only figures that plot raw readings
+results/local/
