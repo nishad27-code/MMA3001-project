@@ -226,3 +226,8 @@ data/processed/
 reference/
 # Local-only figures that plot raw readings
 results/local/
+# Word lock/temp files and local-only document drafts
+~$*
+*.tmp
+docs/*.docx
+docs/interview_prep.md
