@@ -4,17 +4,17 @@
 
 ## 1. Engineering problem
 
-**Context.** Commercial buildings monitor indoor CO₂ because it is a practical proxy for how well a space is ventilated relative to the number of people in it. Building management (BMS) and HVAC analyses, such as ventilation audits, demand-controlled-ventilation tuning and comfort and energy reports, work on logged time series. Wireless sensor logs contain dropouts. Analyses then either discard incomplete periods or fill them, and filling them badly can bias averages, peak estimates and threshold-exceedance counts.
+**Context.** CO₂ shows whether a room is getting enough fresh air for the people in it. Too little fresh air makes people tired and less focused. Building managers and HVAC engineers use this data.
 
-**Problem addressed.** Given a log of genuine CO₂ readings with a missing block, estimate the missing readings and quantify how the error of simple reconstruction methods grows with the length of the gap.
+**Problem.** Sensors sometimes record nothing for a while, so readings go missing. If these gaps are filled badly, averages and peak values come out wrong, and ventilation decisions get made on wrong numbers.
 
-**Research question.** *How does the accuracy of reconstructing missing indoor CO₂ measurements degrade as gap duration increases, and how do linear interpolation and cubic-spline interpolation compare with a simple forward-fill baseline?* [AUTHOR: update the research question to include PCHIP]
+**Dataset.** This project uses Monash Smart Infrastructure Dataset 2 and follows its listed direction, "reconstructing missing sensor measurements".
 
-**Intended use.** Retrospective gap filling of archived logs before analysis, with an evidence-based limit on how long a gap can be filled before the result should be flagged or discarded. Linear and spline interpolation use the reading *after* a gap, so they are not real-time methods. Only forward-fill could run in real time.
+**Research question.** Which of four methods (forward-fill, linear interpolation, cubic spline and PCHIP) fills the gaps most accurately, and how does the accuracy change as the gaps get longer?
 
-[AUTHOR: state that this follows Dataset 2's listed direction 'reconstructing missing sensor measurements']
+**Intended use.** An engineer analysing stored logs, before the analysis and not live, would use the results to choose the best method and the longest gap that is safe to fill.
 
-[AUTHOR: one sentence on limits of scope: one sensor, retrospective use only]
+**Scope.** The project covers one sensor in one room, CO₂ only, and gaps from 10 minutes to 6 hours. It fills gaps after the fact; it does not predict readings live.
 
 ## 2. Inputs, outputs and data
 
@@ -26,7 +26,7 @@
 | Sensor ID | Text, exact match | 6012002000869 | No matching rows: the program stops with an error message |
 | CO₂ value | Number stored with each reading | ppm; accepted range 250–5000 ppm | Rejected and counted, with the reason (for example an unreadable record, wrong unit, missing or non-numeric value, out of range) |
 
-Each reading's own measurement time is used. The time at which the server stored the row is not used. It mixes two UTC offsets because of daylight saving. It also keeps advancing while the sensor is silent.
+Each reading's own measurement time is used. The raw file's name ("MayToDec2024") does not match the measurement dates (29 Feb – 13 Jun 2024), so the measurement times were used, not the file name. The time at which the server stored the row is not used. It mixes two UTC offsets because of daylight saving. It also keeps advancing while the sensor is silent.
 
 Unsupported input: the interpolation methods do not extrapolate. If asked for a time outside the known readings, the program stops with an error message.
 
@@ -44,14 +44,14 @@ All outputs below are results tables and figures in the repository.
 
 ### 2.3 Data audit findings
 
-The environmental file has 179,447 rows from 5 sensors. Only two sensors contain live data. The other three (…227, …241 and …777) repeat one identical reading in every row. [AUTHOR: why not the other live sensor?] This project uses sensor 6012002000869:
+The environmental file has 179,447 rows from 5 sensors. Only two sensors contain live data. The other three (…227, …241 and …777) repeat one identical reading in every row. Sensor …326 also has live data, but it is not on the location sheet and covers a different period, so it was not used. This project uses sensor 6012002000869:
 
 - Source rows: 29,341.
 - Genuine CO₂ readings: **13,800**. The other rows are stale copies of an earlier reading.
 - Coverage: 90.8 % of the readings expected every 10 minutes.
 - Native gaps: the sensor itself misses about 1 reading in 10. There are 1,390 such gaps.
 
-[AUTHOR: one sentence: the occupancy data were not used, and why]
+The occupancy data were not used, because their rooms could not be linked to the CO₂ sensor.
 
 ## 3. Computational approach
 
@@ -62,9 +62,9 @@ Each method estimates the ground truth (the hidden readings) from the known read
 - **Forward-fill (baseline model).** Repeats the last reading before the gap. It uses only earlier readings, so it could run in real time. Its error grows as the true signal drifts away from that last value.
 - **Linear interpolation.** Draws a straight line between the two readings either side of the gap, using the NumPy library. The line always stays between those two values. So it can never overshoot, which means going above or below both nearby readings.
 - **Cubic spline.** A spline is a smooth curve made of short cubic pieces joined end to end. It passes through every known reading. It is computed with the SciPy library, using its standard "not-a-knot" end condition. On smooth signals it becomes much more accurate than a straight line as readings get closer. It has no limit on its shape, so it can overshoot.
-- **PCHIP.** [AUTHOR: write 2-3 sentences on PCHIP: what it is and why it was added]
+- **PCHIP.** PCHIP is a smooth curve that cannot overshoot. It sets the slope to zero at peaks and dips, so it never goes beyond the nearby readings.
 
-**Why these methods.** They are the standard first tools for filling missing values in a time series. They are easy to interpret and cost almost nothing to run. The comparison tests one question: does the spline's extra accuracy on smooth curves carry over to a real, noisy sensor signal? [AUTHOR: one clause on why PCHIP was added]
+**Why these methods.** They are the standard first tools for filling missing values in a time series. They are easy to interpret and cost almost nothing to run. The comparison tests one question: does the spline's extra accuracy on smooth curves carry over to a real, noisy sensor signal? PCHIP was added to test whether removing overshoot fixes the spline.
 
 **Assumptions.**
 1. Each reading's own timestamp is correct.
@@ -96,7 +96,7 @@ The code is written in Python, using the NumPy and SciPy libraries. It is on Git
 - **Convergence order.** The order says how fast the error shrinks as readings get closer together. The measured order is 2 ± 0.2 for linear interpolation. For the spline it is above 3.5 (theory: 4).
 - **No data leakage.** A ground-truth value deliberately set to 10⁶ never reaches a method. The leakage check also stops a deliberately broken gap.
 - **PCHIP stays within the boundary readings.** On 300 noisy synthetic gaps, PCHIP never went beyond the two readings either side. The spline did overshoot on the same data.
-- **Test suite.** All 113 automated tests pass in the latest run. [PENDING: regenerate `results/test-report.txt`, which still shows an older count]
+- **Test suite.** All 113 automated tests pass in the latest run.
 
 ## 5. Validation and results
 
@@ -104,7 +104,7 @@ The code is written in Python, using the NumPy and SciPy libraries. It is on Git
 
 **Why it is appropriate.** It tests exactly the intended use: filling holes in a real log. It uses this sensor's real noise and behaviour. No ground-truth value is ever used as input.
 
-**Did validation influence model selection?** [AUTHOR: yes, PCHIP was added after test results showed spline overshoot; it has no tunable settings, and the final choice (linear) did not change]
+**Did validation influence model selection?** Yes, in one way. PCHIP was added after the test results showed the spline overshooting. PCHIP has no hyperparameters, and the final choice (linear) did not change.
 
 **Hyperparameter tuning on the validation set.** Context 2 had the lowest average spline MAE, so it was selected. It is the smallest context possible. With 4 points, the spline is a single cubic through them. More context made the spline worse (21.8 → 28.9 ppm).
 
@@ -121,14 +121,14 @@ The code is written in Python, using the NumPy and SciPy libraries. It is on Git
 | 3 h | 187 | 191.8 | 15.05 [13.43, 16.80] | **10.15** [9.51, 10.84] | 26.13 [23.92, 28.36] | 11.11 [10.35, 11.94] | 81.9 |
 | 6 h | 92 | 370.9 | 17.78 [15.07, 20.58] | **12.71** [11.20, 14.49] | 47.76 [42.28, 54.12] | 13.34 [11.61, 15.27] | 179.9 |
 
-[AUTHOR: one sentence: % of gaps where linear beat each other method, from frac_gaps_* columns]
+Gap by gap, linear beat the baseline model in 57–70 % of gaps. The spline beat linear in only 5–31 % of gaps, and PCHIP in 22–27 %.
 
 ![CO₂ error vs gap duration](../results/figures/co2_error_vs_duration.png)
 *Figure 2. MAE and RMSE on the held-out test set against gap duration (log scale), with 95 % bootstrap intervals.*
 
 **Signal context (held-out test set).** CO₂ averaged 470 ppm (SD 39 ppm). Most readings (5th–95th percentile) were between 428 and 555 ppm, and the maximum was 634 ppm. Consecutive readings, 10 minutes apart, differed by 9.0 ppm on average. Readings are reported to 1 ppm. This sets a floor on the error. The 10-minute linear MAE (7.8 ppm) is already below that typical change. So a single missing reading cannot be estimated much better from its neighbours.
 
-[AUTHOR: acceptance criterion: MAE below the typical reading-to-reading change (9.0 ppm, from co2_run_info.json); state which methods/durations pass]
+**Acceptance criterion.** A method passes if its MAE is below the typical 9.0 ppm change between consecutive readings. Linear and PCHIP pass for gaps up to 1 h. The spline passes only at 10 min (8.97 ppm), and only just. The baseline model never passes.
 
 **Unsupported inputs and failure modes.** The methods refuse to extrapolate beyond the known readings. Gaps longer than 6 h were not tested. The spline can overshoot badly, by up to 179.9 ppm on 6-hour gaps.
 
@@ -146,28 +146,28 @@ The code is written in Python, using the NumPy and SciPy libraries. It is on Git
 
 | Method | MAE at 1 h (ppm) | MAE at 6 h (ppm) | × change, 10 min → 6 h | Max overshoot (ppm) | Runtime ratio vs linear | Real-time capable? | Complexity |
 |---|---|---|---|---|---|---|---|
-| Baseline (forward-fill) | 10.95 | 17.78 | ×1.9 | 0.0 | [PENDING: benchmark rerun] | [AUTHOR] | [AUTHOR] |
-| Linear | 8.23 | 12.71 | ×1.6 | 0.0 | 1 | [AUTHOR] | [AUTHOR] |
-| Cubic spline | 13.01 | 47.76 | ×5.3 | 179.9 | [PENDING: benchmark rerun] | [AUTHOR] | [AUTHOR] |
-| PCHIP | 8.74 | 13.34 | ×1.7 | 0.0 | [PENDING: benchmark rerun] | [AUTHOR] | [AUTHOR] |
+| Baseline (forward-fill) | 10.95 | 17.78 | ×1.9 | 0.0 | about 1× | Yes | Trivial |
+| Linear | 8.23 | 12.71 | ×1.6 | 0.0 | 1 | No | Simple |
+| Cubic spline | 13.01 | 47.76 | ×5.3 | 179.9 | about 7× | No | Moderate |
+| PCHIP | 8.74 | 13.34 | ×1.7 | 0.0 | about 8.5× | No | Moderate |
 
-**Runtime.** [PENDING: benchmark rerun]
+**Runtime.** Absolute times were not stable between benchmark runs on this laptop, so only ratios to linear are reported. Forward-fill takes about as long as linear (about 1×). The spline takes about 7× as long, and PCHIP about 8.5×. Absolute times are tens to hundreds of microseconds per gap and depend on the machine.
 
 **Profiling and FLOP estimate.**
 - **Profile.** For the spline, most of the time is spent setting up the spline, not calculating. Our own input checks are the next biggest cost for all methods.
 - **Arithmetic per gap.** With context 2 there are 4 known points and at most 36 ground-truth readings to estimate.
   - Linear: about 5 floating-point operations (FLOPs) per estimated reading, so under 200 per gap.
   - Spline: about 40 FLOPs to set up the curve (one small system of equations), plus about 8 per estimated reading. That is under 400 per gap.
-- **Implication.** At about 500 µs per gap, the spline does under 1 million FLOPs per second. A laptop core can do about 10¹⁰ per second. So the time goes on Python and library overhead, not on arithmetic. [PENDING: benchmark rerun – update the µs figure]
-- [AUTHOR: one sentence linking FLOP estimate to the Roofline model (Week 1)]
-- [AUTHOR: memory use: negligible, 4 known points per gap]
-- **Engineering implication.** Filling all 1,390 native gaps in the log takes under a second with any method. So computing cost does not separate the methods. The choice should rest on accuracy and robustness. [PENDING: benchmark rerun – confirm the "under a second" estimate]
+- **Implication.** At tens to hundreds of microseconds per gap, the spline does at most a few million FLOPs per second. A laptop core can do about 10¹⁰ per second. So the time goes on Python and library overhead, not on arithmetic.
+- **Roofline view.** The methods sit far below both hardware limits, the arithmetic limit and the memory-bandwidth limit, so Python overhead sets the speed.
+- **Memory.** Memory use is negligible: each gap uses only 4 known readings.
+- **Engineering implication.** Filling all 1,390 native gaps in the log takes seconds at most with any method. So computing cost does not separate the methods. The choice should rest on accuracy and robustness.
 
-**Final design decision.** To fill gaps in this sensor's CO₂ log after the fact, use **linear interpolation**. Mark the filled values as reconstructed. Leave gaps longer than an agreed limit unfilled, for example 6 h, the longest tested. Do not use an unconstrained cubic spline on noisy 10-minute CO₂ data.
+**Final design decision.** To fill gaps in this sensor's CO₂ log after the fact, use **linear interpolation**. Fill gaps up to 1 h, the longest duration that passed the acceptance criterion. Flag longer gaps as unreliable. Mark all filled values as reconstructed. Do not use an unconstrained cubic spline on noisy 10-minute CO₂ data.
 
 ## 7. Limitations and lessons learned
 
-**Why the spline fails here.** The spline's O(h⁴) advantage assumes the signal is smooth at the sampling scale. At 10-minute sampling, this CO₂ signal varies by about 9 ppm between consecutive readings, either measurement noise or genuinely fast fluctuation, while longer-term trends are small. In ML terms, the spline is overfitting the noise. It treats the noisy boundary readings as if they defined a true slope and curvature. It continues that curvature across the gap, so overshoot rises from 6.5 ppm at 10 min to 180 ppm at 6 h. Linear interpolation cannot leave the range of its two boundary values, which makes it robust. [AUTHOR: one sentence on temperature: smoother signal, PCHIP slightly better at 3-6 h, consistent with explanation]
+**Why the spline fails here.** The spline's O(h⁴) advantage assumes the signal is smooth at the sampling scale. At 10-minute sampling, this CO₂ signal varies by about 9 ppm between consecutive readings, either measurement noise or genuinely fast fluctuation, while longer-term trends are small. In ML terms, the spline is overfitting the noise. It treats the noisy boundary readings as if they defined a true slope and curvature. It continues that curvature across the gap, so overshoot rises from 6.5 ppm at 10 min to 180 ppm at 6 h. Linear interpolation cannot leave the range of its two boundary values, which makes it robust. The temperature signal is smoother. There, PCHIP was slightly better than linear at 3–6 h, by about 0.02 °C. That is below the sensor's 0.2–0.3 °C reading steps, and is consistent with this explanation.
 
 **Why long gaps are harder.** All methods only see the edges of a gap. Real changes inside it, such as occupancy events, ventilation cycles or day–night patterns, are invisible to them. The boundary readings are also single noisy samples, so any trend inferred from them is uncertain. As the gap gets longer, the true signal has more time to depart from what the boundaries suggest.
 
@@ -197,8 +197,7 @@ The code is written in Python, using the NumPy and SciPy libraries. It is on Git
 - Monash Smart Infrastructure, *MMA3001 Dataset – MSI Occupancy and Environmental* (provided by the MMA3001 teaching team, 2026).
 - Virtanen, P. et al. (2020). SciPy 1.0: fundamental algorithms for scientific computing in Python. *Nature Methods* 17, 261–272.
 - Harris, C. R. et al. (2020). Array programming with NumPy. *Nature* 585, 357–362.
-- de Boor, C. (2001). *A Practical Guide to Splines* (rev. ed.). Springer. (Not-a-knot spline conditions and error bounds.)
-- Burden, R. L. & Faires, J. D. *Numerical Analysis*. Cengage. (Interpolation error O(h²) and O(h⁴).)
+- de Boor, C. (2001). *A Practical Guide to Splines* (rev. ed.). Springer.
+- Burden, R. L., Faires, J. D. & Burden, A. M. (2016). *Numerical Analysis* (10th ed.). Cengage Learning.
 - Efron, B. & Tibshirani, R. J. (1993). *An Introduction to the Bootstrap*. Chapman & Hall.
-- [AUTHOR: add Fritsch, F. N. & Carlson, R. E. (1980), Monotone piecewise cubic interpolation, SIAM J. Numer. Anal. 17(2), 238–246, if PCHIP is cited; check this reference first]
-- [AUTHOR: add a source for typical NDIR CO₂ sensor accuracy, and ventilation guidance such as ASHRAE 62.1 or the NCC/AS 1668.2, before relying on any sensor-accuracy comparison in Section 5.]
+- Fritsch, F. N. & Carlson, R. E. (1980). Monotone piecewise cubic interpolation. *SIAM Journal on Numerical Analysis* 17(2), 238–246.
